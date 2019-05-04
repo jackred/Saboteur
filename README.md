@@ -1,10 +1,10 @@
-# Gitlab-bot
+# Saboteur
 
-A basic discord bot, written in node.js, to send message when there is a push event in the desired branch of a project  
+Bot looking into a boardgames db to give you games matching a number of people / given time and other arguments
 
 ## Run the bot
 Creating the image:  
-`sudo docker build -t gitlab-bot .`
+`sudo docker build -t saboteur .`
 
 Running the bot:  
 `./start.sh`
@@ -15,5 +15,4 @@ run `./start.sh debug` to be in interactive mode
 
 ## Configuration
 
-Complete the `config.json` and `gitlab.json` with the sample file as example  
-
+Complete the `config.json` with the token as in te example file
