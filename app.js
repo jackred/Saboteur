@@ -12,9 +12,8 @@ const clap = "👏";
 
 function respondToMessage(message){
   if (!(message.author.bot)){
-    if (message.content.includes(clap) && message.content.replace(new RegExp(clap,"g"), '') == '') {
-      let nbOccurence = (message.content.match(new RegExp(clap, "g")) || []).length;
-      message.channel.send(clap.repeat(nbOccurence));
+    if (message.content.includes(clap) && message.content.replace(new RegExp(clap,"g"), '').replace(/ /g,'') == '') {
+      message.channel.send(message.content);
     } else {
       if (message.content == 'tg'){
 	message.channel.send('<:lina:559013499649523722>');
