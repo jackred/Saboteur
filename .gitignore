@@ -1,6 +1,7 @@
 *~
 *#
-config.json
+config*.json
+start.sh
 gitlab.json
 node_modules
 .npm

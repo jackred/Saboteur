@@ -1,25 +1,54 @@
 const Discord = require('discord.js');
-const client = new Discord.Client();
 const config = require('./config.json');
 
-console.log('Gitlab bots is starting');
-client.on('message', respondToMessage);
-client.login(config.token);
+// class
+const SaboteurDB = require('./lib/SaboteurDB');
+const SaboteurController = require('./lib/SaboteurController');
+const SaboteurCommand = require('./lib/SaboteurCommand');
 
-const clap = "👏";
+// module
+const SaboteurDND = require('./lib/SaboteurDND');
+const SaboteurParser = require('./lib/SaboteurParser');
+const SaboteurMain = require('./lib/SaboteurMain');
+
+// discord
+const client = new Discord.Client();
+client.on('ready', () => {
+  console.log('Starting!');
+  client.user.setActivity(config.activity);
+});
+
+// db
+let database = new SaboteurDB();
+
+// commands
+let cmdRoll = new SaboteurCommand(
+  SaboteurDND.roll,
+  {},
+  () => '`!roll` allow you to roll different dices. You have to give at least one argument. A roll is composed of 2 things: the number of dice you want to roll and the value of the dice. For example if you want to roll 2 dice 6, the correct argument is `2d6`.\n You can do multiple roll, e.g: `!roll 2d3 4d5 d8`. As you saw, the last argument is only `d8`, because we want to roll only one dice, so the 1 is optional.\nThe limit is 100.'
+);
+
+let generalPrefixCmd = new SaboteurCommand(
+  SaboteurMain.generalPrefixMain,
+  {'roll': cmdRoll},
+  function(){
+    console.log(this);
+    return 'General Command prefix: !\n' + this.listSubCommand().join(', ') + '\n';
+  },
+);
+let cmd = new SaboteurCommand(
+  SaboteurMain.main,
+  {[config.prefix.general]: generalPrefixCmd},
+  '',
+  '',
+  SaboteurParser.prefixParser
+);
+
+// controller
+let controller = new SaboteurController(client, cmd, {}, database);
 
 
 
-function respondToMessage(message){
-  if (!(message.author.bot)){
-    if (message.content.includes(clap) && message.content.replace(new RegExp(clap,"g"), '').replace(/ /g,'') == '') {
-      message.channel.send(message.content);
-    } else {
-      if (message.content == 'tg'){
-	message.channel.send('<:lina:559013499649523722>');
-      } else if (message.content == 'ping') {
-	message.channel.send('pong');
-      }
-    }
-  }
-}
+client.login(config.token)
+  .then(() => console.log("We're in!"))
+  .catch((err) => console.log(err));
