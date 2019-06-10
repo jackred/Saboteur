@@ -26,14 +26,14 @@ let database = new SaboteurDB();
 let cmdRoll = new SaboteurCommand(
   SaboteurDND.roll,
   {},
-  0,
+  config.permission.d,
   () => '`!roll` allow you to roll different dices. You have to give at least one argument. A roll is composed of 2 things: the number of dice you want to roll and the value of the dice. For example if you want to roll 2 dice 6, the correct argument is `2d6`.\n You can do multiple roll, e.g: `!roll 2d3 4d5 d8`. As you saw, the last argument is only `d8`, because we want to roll only one dice, so the 1 is optional.\nThe limit is 100.'
 );
 
 let cmdSay = new SaboteurCommand(
   SaboteurAdmin.say,
   {},
-  3,
+  config.permission.w,
   '',
   () => '`!say`: whitelist only command. Write a message with the rest of the text and delete the command message sent by the user'
 );
@@ -41,7 +41,7 @@ let cmdSay = new SaboteurCommand(
 let generalPrefixCmd = new SaboteurCommand(
   SaboteurMain.generalPrefixMain,
   {'roll': cmdRoll, 'say': cmdSay},
-  0,
+  config.permission.d,
   function(){
     return 'General Command prefix: !\n'
       + this.listSubCommand()
@@ -52,7 +52,7 @@ let generalPrefixCmd = new SaboteurCommand(
 let cmd = new SaboteurCommand(
   SaboteurMain.main,
   {[config.prefix.general]: generalPrefixCmd},
-  0,
+  config.permission.b,
   '',
   '',
   SaboteurParser.prefixParser
