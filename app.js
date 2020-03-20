@@ -34,7 +34,6 @@ let cmdSay = new SaboteurCommand(
   SaboteurAdmin.say,
   {},
   config.permission.w,
-  '',
   () => '`!say`: whitelist only command. Write a message with the rest of the text and delete the command message sent by the user'
 );
 
