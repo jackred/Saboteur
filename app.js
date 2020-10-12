@@ -54,7 +54,6 @@ async function respondToMessage(message) {
         }
         case '!jdr':
           try {
-            console.log('try');
             let msg = await addRoleJDR(message.member, message.guild);
             message.channel.send(msg);
           } catch (e) {
