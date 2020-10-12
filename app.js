@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const config = require('./config.test.json');
+const config = require('./config.json');
 
 console.log('Sabteur is starting');
 client.on('message', respondToMessage);
