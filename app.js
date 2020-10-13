@@ -4,10 +4,23 @@ const config = require('./config.json');
 
 console.log('Sabteur is starting');
 client.on('message', respondToMessage);
+client.on('guildMemberAdd', joinMember);
 client.login(config.token);
 
 const clap = '👏';
 const jdrID = '765197945372803073';
+const botChanID = '765279134510350387';
+const accueilChanID = '496220262887587853';
+const guildID = '496220262887587850';
+
+function joinMember(member) {
+  const chan = member.guild.channels.get(accueilChanID);
+  if (chan !== undefined) {
+    chan.send(
+      `Bienvenue ${member} ! Si tu veux participer au JDR, utilise la commande \`!jdr\` dans le channel <#${botChanID}>.`
+    );
+  }
+}
 
 async function addRole(member, role) {
   if (member.roles.has(role.id)) {
@@ -100,14 +113,27 @@ async function respondToMessage(message) {
           message.channel.send('pong');
           break;
         }
-        case '!jdr':
-          try {
-            let msg = await addRoleJDR(message.member, message.guild);
-            message.channel.send(msg);
-          } catch (e) {
-            message.channel.send(buildEmbedError(e));
+        case '!jdr': {
+          if (message.channel.type === 'text') {
+            if (message.channel.id === botChanID) {
+              try {
+                let msg = await addRoleJDR(message.member, message.guild);
+                message.channel.send(msg);
+              } catch (e) {
+                message.channel.send(buildEmbedError(e));
+              }
+            } else {
+              const chan = message.guild.channels.get(botChanID);
+              if (chan !== undefined) {
+                await chan.send(
+                  `${message.member} il faut utiliser ce channel pour les commandes comme \`!jdr\` pour ne pas spam.`
+                );
+                await message.delete();
+              }
+            }
           }
           break;
+        }
       }
     }
   }
