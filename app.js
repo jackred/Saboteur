@@ -68,7 +68,14 @@ function roll(message) {
       } catch (e) {
         message.channel.send(msg);
       }
-      if (nbRoll > 0 && nDice > 0 && nbRoll < 101 && nDice < 101) {
+      if (
+        nbRoll > 0 &&
+        nDice > 0 &&
+        nbRoll < 101 &&
+        nDice < 101 &&
+        nbRoll % 1 === 0 &&
+        nDice % 1 === 0
+      ) {
         let res = [];
         for (let i = 0; i < nbRoll; i++) {
           res.push(randomBtwn2(1, nDice));
