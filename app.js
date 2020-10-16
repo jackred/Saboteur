@@ -82,9 +82,16 @@ function roll(message) {
         }
         const lst = res.join(', ');
         const sum = res.reduce((val, acc) => val + acc);
-        const msgDice = `Vous avez lancé ${nbRoll} dé${
+        let msgDice = `Vous avez lancé ${nbRoll} dé${
           nbRoll > 1 ? 's' : ''
         } ${nDice}. Somme des lancés: ${sum}.\nListe des résultats: ${lst}`;
+        if (nDice === 20 && nbRoll === 1) {
+          if (res[0] === 1) {
+            msgDice += '\n**Échec critique!**';
+          } else if (res[0] === 20) {
+            msgDice += '\n**Succés critique!**';
+          }
+        }
         if (msgDice.length > 1998) {
           message.channel.send('Message trop long ! Trop de lancés !');
         } else {
