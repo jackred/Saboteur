@@ -7,6 +7,9 @@ client.on('message', respondToMessage);
 client.on('guildMemberAdd', joinMember);
 client.login(config.token);
 
+const diReg = /(?=(di(\s*[^\s]*)($|\b)))di/g;
+const criReg = /(?=(cri(\s*[^\s]*)($|\b)))cri/g;
+const dicriProba = 0.2;
 const clap = '👏';
 const jdrID = '765197945372803073';
 const botChanID = '765279134510350387';
@@ -108,8 +111,38 @@ function roll(message) {
   }
 }
 
+function matchRec(text, exp, transform) {
+  let tmp = [];
+  let match;
+  while ((match = exp.exec(text)) != null) {
+    tmp.push(transform(match[2]));
+  }
+  return tmp;
+}
+
+function transformDi(str) {
+  return str.trim();
+}
+
+function transformCri(str) {
+  return transformDi(str).toUpperCase();
+}
+
+function writeDiorCri(message) {
+  let diArray = matchRec(message.content, diReg, transformDi);
+  let criArray = matchRec(message.content, criReg, transformCri);
+  let toSend = [...diArray, ...criArray].filter(
+    (d) => Math.random() <= dicriProba
+  );
+  let idx = Math.ceil(Math.random() * toSend.length) - 1;
+  if (idx !== -1) {
+    message.channel.send(toSend[idx]);
+  }
+}
+
 async function respondToMessage(message) {
   if (!message.author.bot) {
+    writeDiorCri(message);
     if (
       message.content.includes(clap) &&
       message.content.replace(new RegExp(clap, 'g'), '').replace(/ /g, '') == ''
