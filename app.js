@@ -16,13 +16,14 @@ const yuGiOhID = '772480901534711818';
 const magicID = '772480789123432448';
 const botChanID = '765279134510350387';
 const accueilChanID = '496220262887587853';
+const annonceChanID = '519089314571878400';
 const guildID = '496220262887587850';
 
 function joinMember(member) {
   const chan = member.guild.channels.get(accueilChanID);
   if (chan !== undefined) {
     chan.send(
-      `Bienvenue ${member} ! Si tu veux participer au JDR, utilise la commande \`!jdr\` dans le channel <#${botChanID}>.`
+      `Bienvenue ${member} ! si tu veux participer à un évent, tu peux en apprendre plus dans <#${annonceChanID}>. Tu peux t'ajouter des roles correspondant dans <#${botChanID}>. La commande \`!help\` est également disponible`
     );
   }
 }
@@ -60,6 +61,27 @@ function buildEmbedError(error) {
   embed.setDescription(error.stack);
   embed.setColor('#FF0000');
   embed.setTimestamp();
+  return embed;
+}
+
+function buildHelp() {
+  let embed = new Discord.RichEmbed();
+  embed.setTitle('Aide des commandes');
+  embed.setDescription(
+    `Les commandes préfixées d'un \`!\` doivent être exécutées dans <#${botChanID}>`
+  );
+  embed.setColor('#eaff00');
+  embed.setTimestamp();
+  embed.addField('!jdr', '```Ajoute ou enlève le role JDR```', false);
+  embed.addField('!magic', '```Ajoute ou enlève le role Magic```', false);
+  embed.addField('!yugioh', '```Ajoute ou enlève le role yu-gi-oh```', false);
+  embed.addField('!help', "```Affiche ce message d'aide```", false);
+  embed.addField(
+    '.roll XdY',
+    '```Lance X dé(s) Y et affiche le résultat. Ex: .roll 4d8```',
+    false
+  );
+
   return embed;
 }
 
@@ -152,11 +174,11 @@ function writeDiorCri(message) {
   }
 }
 
-async function addRoleCommand(message, fn, cmd) {
+async function doCommandInBotChan(message, fn, cmd, ...arg) {
   if (message.channel.type === 'text') {
     if (message.channel.id === botChanID) {
       try {
-        let msg = await fn(message.member, message.guild);
+        let msg = await fn(...arg);
         message.channel.send(msg);
       } catch (e) {
         message.channel.send(buildEmbedError(e));
@@ -181,7 +203,7 @@ async function respondToMessage(message) {
       message.content.replace(new RegExp(clap, 'g'), '').replace(/ /g, '') == ''
     ) {
       message.channel.send(message.content);
-    } else if (message.content.startsWith('!roll')) {
+    } else if (message.content.startsWith('.roll')) {
       roll(message);
     } else {
       switch (message.content) {
@@ -194,15 +216,37 @@ async function respondToMessage(message) {
           break;
         }
         case '!jdr': {
-          await addRoleCommand(message, addRoleJDR, '!jdr');
+          await doCommandInBotChan(
+            message,
+            addRoleJDR,
+            '!jdr',
+            message.member,
+            message.guild
+          );
           break;
         }
         case '!magic': {
-          await addRoleCommand(message, addRoleMagic, '!magic');
+          await doCommandInBotChan(
+            message,
+            addRoleMagic,
+            '!magic',
+            message.member,
+            message.guild
+          );
           break;
         }
         case '!yugioh': {
-          await addRoleCommand(message, addRoleYuGiOh, '!yugioh');
+          await doCommandInBotChan(
+            message,
+            addRoleYuGiOh,
+            '!yugioh',
+            message.member,
+            message.guild
+          );
+          break;
+        }
+        case '!help': {
+          await doCommandInBotChan(message, buildHelp, '!help');
           break;
         }
       }
