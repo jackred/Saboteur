@@ -23,7 +23,7 @@ function joinMember(member) {
   const chan = member.guild.channels.get(accueilChanID);
   if (chan !== undefined) {
     chan.send(
-      `Bienvenue ${member} ! si tu veux participer à un évent, tu peux en apprendre plus dans <#${annonceChanID}>. Tu peux t'ajouter des roles correspondant dans <#${botChanID}>. La commande \`!help\` est également disponible`
+      `Bienvenue ${member} ! Ssi tu veux participer à un évent, tu peux en apprendre plus dans <#${annonceChanID}>. Tu peux t'ajouter des roles pour ces events dans <#${botChanID}>. La commande \`!help\` est également disponible`
     );
   }
 }
