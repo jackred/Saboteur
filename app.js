@@ -12,6 +12,8 @@ const criReg = /(?=(cri(\s*[^\s]*)($|\b)))cri/g;
 const dicriProba = 0.2;
 const clap = '👏';
 const jdrID = '765197945372803073';
+const yuGiOhID = '772480901534711818';
+const magicID = '772480789123432448';
 const botChanID = '765279134510350387';
 const accueilChanID = '496220262887587853';
 const guildID = '496220262887587850';
@@ -39,6 +41,16 @@ async function addRole(member, role) {
 
 async function addRoleJDR(member, guild) {
   const role = guild.roles.get(jdrID);
+  return await addRole(member, role);
+}
+
+async function addRoleMagic(member, guild) {
+  const role = guild.roles.get(magicID);
+  return await addRole(member, role);
+}
+
+async function addRoleYuGiOh(member, guild) {
+  const role = guild.roles.get(yuGiOhID);
   return await addRole(member, role);
 }
 
@@ -140,6 +152,27 @@ function writeDiorCri(message) {
   }
 }
 
+async function addRoleCommand(message, fn, cmd) {
+  if (message.channel.type === 'text') {
+    if (message.channel.id === botChanID) {
+      try {
+        let msg = await fn(message.member, message.guild);
+        message.channel.send(msg);
+      } catch (e) {
+        message.channel.send(buildEmbedError(e));
+      }
+    } else {
+      const chan = message.guild.channels.get(botChanID);
+      if (chan !== undefined) {
+        await chan.send(
+          `${message.member} il faut utiliser ce channel pour les commandes comme \`${cmd}\` pour ne pas spam.`
+        );
+        await message.delete();
+      }
+    }
+  }
+}
+
 async function respondToMessage(message) {
   if (!message.author.bot) {
     writeDiorCri(message);
@@ -161,24 +194,15 @@ async function respondToMessage(message) {
           break;
         }
         case '!jdr': {
-          if (message.channel.type === 'text') {
-            if (message.channel.id === botChanID) {
-              try {
-                let msg = await addRoleJDR(message.member, message.guild);
-                message.channel.send(msg);
-              } catch (e) {
-                message.channel.send(buildEmbedError(e));
-              }
-            } else {
-              const chan = message.guild.channels.get(botChanID);
-              if (chan !== undefined) {
-                await chan.send(
-                  `${message.member} il faut utiliser ce channel pour les commandes comme \`!jdr\` pour ne pas spam.`
-                );
-                await message.delete();
-              }
-            }
-          }
+          await addRoleCommand(message, addRoleJDR, '!jdr');
+          break;
+        }
+        case '!magic': {
+          await addRoleCommand(message, addRoleMagic, '!magic');
+          break;
+        }
+        case '!yugioh': {
+          await addRoleCommand(message, addRoleYuGiOh, '!yugioh');
           break;
         }
       }
