@@ -91,9 +91,9 @@ function randomBtwn2(min, max) {
 
 function roll(message) {
   const msg =
-    'Mauvais format pour la commande roll. ex: `!roll XdY` X et Y sont des 0 < nombres < 101';
+    'Mauvais format pour la commande roll. ex: `.roll XdY` X et Y sont des 0 < nombres < 101';
 
-  const args = message.content.replace('!roll', '').trim();
+  const args = message.content.replace('.roll', '').trim();
   const dice = args.split('d');
   if (dice.length === 2) {
     if (!isNaN(dice[0]) && !isNaN(dice[1])) {
