@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require('./config.json');
 
-console.log('Sabteur is starting');
+console.log('Saboteur is starting');
 client.on('message', respondToMessage);
 client.on('guildMemberAdd', joinMember);
 client.login(config.token);
@@ -14,6 +14,7 @@ const clap = '👏';
 const jdrID = '765197945372803073';
 const yuGiOhID = '772480901534711818';
 const magicID = '772480789123432448';
+const chessID = '779332033133412363';
 const botChanID = '765279134510350387';
 const accueilChanID = '496220262887587853';
 const annonceChanID = '519089314571878400';
@@ -55,6 +56,11 @@ async function addRoleYuGiOh(member, guild) {
   return await addRole(member, role);
 }
 
+async function addRoleChess(member, guild) {
+  const role = guild.roles.get(chessID);
+  return await addRole(member, role);
+}
+
 function buildEmbedError(error) {
   let embed = new Discord.RichEmbed();
   embed.setTitle(error.name);
@@ -75,6 +81,7 @@ function buildHelp() {
   embed.addField('!jdr', '```Ajoute ou enlève le role JDR```', false);
   embed.addField('!magic', '```Ajoute ou enlève le role Magic```', false);
   embed.addField('!yugioh', '```Ajoute ou enlève le role yu-gi-oh```', false);
+  embed.addField('!chess', '```Ajoute ou enlève le role chess```', false);
   embed.addField('!help', "```Affiche ce message d'aide```", false);
   embed.addField(
     '.roll XdY',
@@ -220,6 +227,16 @@ async function respondToMessage(message) {
             message,
             addRoleJDR,
             '!jdr',
+            message.member,
+            message.guild
+          );
+          break;
+        }
+        case '!chess': {
+          await doCommandInBotChan(
+            message,
+            addRoleChess,
+            '!chess',
             message.member,
             message.guild
           );
