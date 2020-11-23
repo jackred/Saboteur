@@ -9,6 +9,7 @@ client.login(config.token);
 
 const diReg = /(?=(di(\s*[^\s]*)($|\b)))di/g;
 const criReg = /(?=(cri(\s*[^\s]*)($|\b)))cri/g;
+const cpafoReg = /^c'est pas faux[?!.]?$/i;
 const dicriProba = 0.2;
 const clap = '👏';
 const jdrID = '765197945372803073';
@@ -181,6 +182,10 @@ function writeDiorCri(message) {
   }
 }
 
+async function getPreviousMessages(channel, msgID, nb = 1) {
+  return channel.fetchMessages({ limit: nb, before: msgID });
+}
+
 async function doCommandInBotChan(message, fn, cmd, ...arg) {
   if (message.channel.type === 'text') {
     if (message.channel.id === botChanID) {
@@ -212,6 +217,16 @@ async function respondToMessage(message) {
       message.channel.send(message.content);
     } else if (message.content.startsWith('.roll')) {
       roll(message);
+    } else if (cpafoReg.test(message.content)) {
+      const prvMessages = await getPreviousMessages(
+        message.channel,
+        message.id
+      );
+      const prvMessageSplit = prvMessages.first().content.split(' ');
+      const idx = randomBtwn2(0, prvMessageSplit.length - 1);
+      message.channel.send(
+        `Sans blague, vous savez pas ce que ça veut dire *${prvMessageSplit[idx]}* ?`
+      );
     } else {
       switch (message.content) {
         case 'tg': {
