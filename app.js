@@ -223,9 +223,11 @@ async function respondToMessage(message) {
         message.id
       );
       const prvMessageSplit = prvMessages.first().content.split(' ');
-      const idx = randomBtwn2(0, prvMessageSplit.length - 1);
+      const prvMessageLongest = prvMessageSplit.sort(
+        (a, b) => b.length - a.length
+      )[0];
       message.channel.send(
-        `Sans blague, vous savez pas ce que ça veut dire *${prvMessageSplit[idx]}* ?`
+        `Sans blague, vous savez pas ce que ça veut dire *${prvMessageLongest}* ?`
       );
     } else {
       switch (message.content) {
