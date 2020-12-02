@@ -16,6 +16,7 @@ const jdrID = '765197945372803073';
 const yuGiOhID = '772480901534711818';
 const magicID = '772480789123432448';
 const chessID = '779332033133412363';
+const mahjongID = '783614530831515699';
 const botChanID = '765279134510350387';
 const accueilChanID = '496220262887587853';
 const annonceChanID = '519089314571878400';
@@ -62,6 +63,11 @@ async function addRoleChess(member, guild) {
   return await addRole(member, role);
 }
 
+async function addRoleMahjong(member, guild) {
+  const role = guild.roles.get(mahjongID);
+  return await addRole(member, role);
+}
+
 function buildEmbedError(error) {
   let embed = new Discord.RichEmbed();
   embed.setTitle(error.name);
@@ -83,6 +89,7 @@ function buildHelp() {
   embed.addField('!magic', '```Ajoute ou enlève le role Magic```', false);
   embed.addField('!yugioh', '```Ajoute ou enlève le role yu-gi-oh```', false);
   embed.addField('!chess', '```Ajoute ou enlève le role chess```', false);
+  embed.addField('!mahjong', '```Ajoute ou enlève le role mahjong```', false);
   embed.addField('!help', "```Affiche ce message d'aide```", false);
   embed.addField(
     '.roll XdY',
@@ -254,6 +261,16 @@ async function respondToMessage(message) {
             message,
             addRoleChess,
             '!chess',
+            message.member,
+            message.guild
+          );
+          break;
+        }
+        case '!mahjong': {
+          await doCommandInBotChan(
+            message,
+            addRoleMahjong,
+            '!mahjong',
             message.member,
             message.guild
           );
