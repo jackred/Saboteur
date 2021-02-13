@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  discord_bot:
+    container_name: saboteur
+    build: .
+    volumes:
+      - ./config.json:/usr/src/saboteur/config.json
+    restart: always
+
+networks:
+  default:
+    external:
+      name: ng_network
