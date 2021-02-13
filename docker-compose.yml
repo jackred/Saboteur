@@ -5,7 +5,7 @@ services:
     container_name: saboteur
     build: .
     volumes:
-      - ./config.json:/usr/src/saboteur/config.json
+      - ./config.test.json:/usr/src/saboteur/config.json
     restart: always
 
 networks:

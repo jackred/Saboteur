@@ -10,6 +10,6 @@
     "discord.js": "^12.5.1",
     "erlpack": "^0.1.3",
     "mongoose": "^5.11.16",
-    "tumult": "git+ssh://git@github.com/jackred/Tumult.git#release"
+    "tumult": "file:Tumult"
   }
 }
