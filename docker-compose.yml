@@ -6,6 +6,7 @@ services:
     build: .
     volumes:
       - ./config.test.json:/usr/src/saboteur/config.json
+      - ./permission.json:/usr/src/saboteur/permission.json
     restart: always
 
 networks:
