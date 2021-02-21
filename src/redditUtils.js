@@ -29,8 +29,10 @@ function buildEmbedSubReddit(sub) {
   embed.setAuthor(sub.url, sub.icon_img, rURL + '/' + sub.url);
   embed.setTitle(sub.title);
   embed.setDescription(`*${sub.public_description}*`);
-  const subscriber = `subscribers: ${sub.subscribers}
-activesq:     ${sub.accounts_active}`;
+  const subscriber = `subscriber${sub.subscribers > 1 ? 's' : ''}: ${
+    sub.subscribers
+  }
+active${sub.accounts_active > 1 ? 's' : ''}:     ${sub.accounts_active}`;
   embed.addField('Members', buildCode(subscriber, 'yaml'));
   embed.footer.text += ' | sub creation date';
   embed.setTimestamp(sub.created_utc * 1000);
