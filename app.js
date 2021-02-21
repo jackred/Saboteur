@@ -2,7 +2,7 @@ const Tumult = require('tumult');
 const config = require('./config.json');
 const permission = require('./permission.json');
 
-const { subCmdPrefix } = require('./src/redditCmd');
+const { subCmdPrefix, subCmdPost } = require('./src/redditCmd');
 
 let cmdPrefix = new Tumult.Command(
   '!r',
@@ -12,7 +12,7 @@ let cmdPrefix = new Tumult.Command(
     return true;
   },
   {
-    subCommand: [subCmdPrefix], // subCommand
+    subCommand: [subCmdPrefix, subCmdPost], // subCommand
     generalHelp: 'Prefix: !r',
     parser: Tumult.Parser.prefixParser, // parser for message
   }
