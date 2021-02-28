@@ -3,6 +3,7 @@ const config = require('./config.json');
 const permission = require('./permission.json');
 
 const { subCmdPrefix, subCmdPost } = require('./src/redditCmd');
+const { roleInfoCmd, userInfoCmd } = require('./src/findCmd');
 
 let cmdPrefix = new Tumult.Command(
   '!r',
@@ -18,7 +19,7 @@ let cmdPrefix = new Tumult.Command(
   }
 );
 
-const cmd = [cmdPrefix];
+const cmd = [cmdPrefix, roleInfoCmd, userInfoCmd];
 
 let controller = new Tumult.Controller(config.token, permission, {
   partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
