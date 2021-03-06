@@ -1,6 +1,6 @@
 'use strict';
 const { cutAt } = require('./utility');
-const { findRole } = require('./findUtility');
+const { findMember, findRole } = require('./findUtility');
 
 async function sendInfoRole(roles, string, channel) {
   if (roles.length > 0) {
@@ -54,7 +54,7 @@ function divideRoleByPermission(roles, highest) {
   return { rolesToUse, rolesTooHigh };
 }
 
-async function executeRoleFunction(msg, args, fn) {
+async function executeRoleFunction(msg, args, fn, { ...args_fn } = {}) {
   const resRoles = buildRolesArray(args, msg.guild, msg.mentions, ';');
   if (resRoles.found) {
     const roles = divideRoleByPermission(
@@ -66,15 +66,18 @@ async function executeRoleFunction(msg, args, fn) {
       "I can't manage the following role",
       msg.channel
     );
-    await fn(msg, roles.rolesToUse);
+    await fn(msg, roles.rolesToUse, args_fn);
   } else {
     await msg.channel.send(resRoles.msg);
     console.log(resRoles.msg);
   }
 }
 
-async function addRoles(msg, roles) {
-  await msg.member.roles.add(roles);
+async function addRoles(msg, roles, { member = null } = {}) {
+  if (member === null) {
+    member = msg.member;
+  }
+  await member.roles.add(roles);
   await sendInfoRole(
     roles,
     `${msg.member.displayName} has now the role`,
@@ -87,8 +90,29 @@ async function addRolesAction(msg, args) {
   return true;
 }
 
-async function rmRoles(msg, roles) {
-  await msg.member.roles.remove(roles);
+async function addRolesAdminAction(msg, args) {
+  console.log('OUI');
+  const argsArray = args.split(';');
+  const resUser = findMember(argsArray[0], msg.guild, msg.mentions.users);
+  if (resUser.found) {
+    await executeRoleFunction(
+      msg,
+      args.substr(argsArray[0].length + 1),
+      addRoles,
+      resUser.value
+    );
+  } else {
+    await msg.channel.send(resUser.msg);
+    console.log(resUser.msg);
+  }
+  return true;
+}
+
+async function rmRoles(msg, roles, { member = null } = {}) {
+  if (member === null) {
+    member = msg.member;
+  }
+  await member.roles.remove(roles);
   await sendInfoRole(
     roles,
     `${msg.member.displayName} has lost the role`,
@@ -101,19 +125,22 @@ async function rmRolesAction(msg, args) {
   return true;
 }
 
-async function toggleRoles(msg, roles) {
+async function toggleRoles(msg, roles, { member = null } = {}) {
+  if (member === null) {
+    member = msg.member;
+  }
   let rolesToRemove = [];
   let rolesToAdd = [];
   for (let role of roles) {
-    if (msg.member.roles.cache.has(role.id)) {
+    if (member.roles.cache.has(role.id)) {
       await rolesToRemove.push(role);
     } else {
       await rolesToAdd.push(role);
     }
   }
   console.log('i', rolesToRemove, 'jj', rolesToAdd);
-  await rmRoles(msg, rolesToRemove);
-  await addRoles(msg, rolesToAdd);
+  await rmRoles(msg, rolesToRemove, member);
+  await addRoles(msg, rolesToAdd, member);
 }
 
 async function toggleRolesAction(msg, args) {
@@ -121,4 +148,9 @@ async function toggleRolesAction(msg, args) {
   return true;
 }
 
-module.exports = { addRolesAction, rmRolesAction, toggleRolesAction };
+module.exports = {
+  addRolesAction,
+  rmRolesAction,
+  toggleRolesAction,
+  addRolesAdminAction,
+};
