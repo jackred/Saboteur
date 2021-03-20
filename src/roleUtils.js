@@ -91,7 +91,6 @@ async function addRolesAction(msg, args) {
 }
 
 async function addRolesAdminAction(msg, args) {
-  console.log('OUI');
   const argsArray = args.split(';');
   const resUser = findMember(argsArray[0], msg.guild, msg.mentions.users);
   if (resUser.found) {
@@ -125,6 +124,23 @@ async function rmRolesAction(msg, args) {
   return true;
 }
 
+async function rmRolesAdminAction(msg, args) {
+  const argsArray = args.split(';');
+  const resUser = findMember(argsArray[0], msg.guild, msg.mentions.users);
+  if (resUser.found) {
+    await executeRoleFunction(
+      msg,
+      args.substr(argsArray[0].length + 1),
+      rmRoles,
+      resUser.value
+    );
+  } else {
+    await msg.channel.send(resUser.msg);
+    console.log(resUser.msg);
+  }
+  return true;
+}
+
 async function toggleRoles(msg, roles, { member = null } = {}) {
   if (member === null) {
     member = msg.member;
@@ -153,4 +169,5 @@ module.exports = {
   rmRolesAction,
   toggleRolesAction,
   addRolesAdminAction,
+  rmRolesAdminAction,
 };
