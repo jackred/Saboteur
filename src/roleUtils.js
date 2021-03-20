@@ -154,7 +154,6 @@ async function toggleRoles(msg, roles, { member = null } = {}) {
       await rolesToAdd.push(role);
     }
   }
-  console.log('i', rolesToRemove, 'jj', rolesToAdd);
   await rmRoles(msg, rolesToRemove, member);
   await addRoles(msg, rolesToAdd, member);
 }
@@ -164,10 +163,28 @@ async function toggleRolesAction(msg, args) {
   return true;
 }
 
+async function toggleRolesAdminAction(msg, args) {
+  const argsArray = args.split(';');
+  const resUser = findMember(argsArray[0], msg.guild, msg.mentions.users);
+  if (resUser.found) {
+    await executeRoleFunction(
+      msg,
+      args.substr(argsArray[0].length + 1),
+      toggleRoles,
+      resUser.value
+    );
+  } else {
+    await msg.channel.send(resUser.msg);
+    console.log(resUser.msg);
+  }
+  return true;
+}
+
 module.exports = {
   addRolesAction,
   rmRolesAction,
   toggleRolesAction,
   addRolesAdminAction,
   rmRolesAdminAction,
+  toggleRolesAdminAction,
 };
