@@ -80,7 +80,7 @@ async function addRoles(msg, roles, { member = null } = {}) {
   await member.roles.add(roles);
   await sendInfoRole(
     roles,
-    `${msg.member.displayName} has now the role`,
+    `${member.displayName} has now the role`,
     msg.channel
   );
 }
@@ -114,7 +114,7 @@ async function rmRoles(msg, roles, { member = null } = {}) {
   await member.roles.remove(roles);
   await sendInfoRole(
     roles,
-    `${msg.member.displayName} has lost the role`,
+    `${member.displayName} has lost the role`,
     msg.channel
   );
 }
@@ -154,8 +154,8 @@ async function toggleRoles(msg, roles, { member = null } = {}) {
       await rolesToAdd.push(role);
     }
   }
-  await rmRoles(msg, rolesToRemove, member);
-  await addRoles(msg, rolesToAdd, member);
+  await rmRoles(msg, rolesToRemove, { member });
+  await addRoles(msg, rolesToAdd, { member });
 }
 
 async function toggleRolesAction(msg, args) {
@@ -171,7 +171,9 @@ async function toggleRolesAdminAction(msg, args) {
       msg,
       args.substr(argsArray[0].length + 1),
       toggleRoles,
-      resUser.value
+      {
+        member: resUser.value,
+      }
     );
   } else {
     await msg.channel.send(resUser.msg);
