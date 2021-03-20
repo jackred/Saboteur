@@ -2,6 +2,9 @@
 const { cutAt } = require('./utility');
 const { findMember, findRole } = require('./findUtility');
 
+//////
+// information
+//////
 async function sendInfoRole(roles, string, channel) {
   if (roles.length > 0) {
     let s = '';
@@ -18,6 +21,9 @@ async function sendInfoRole(roles, string, channel) {
   }
 }
 
+//////
+// utility
+//////
 function buildRolesArray(args, guild, mentions, separator = ';') {
   const argsArray = args.split(separator);
   let tmpRole;
@@ -54,6 +60,9 @@ function divideRoleByPermission(roles, highest) {
   return { rolesToUse, rolesTooHigh };
 }
 
+//////
+// main functions
+//////
 async function executeRoleFunction(msg, args, fn, { ...args_fn } = {}) {
   const resRoles = buildRolesArray(args, msg.guild, msg.mentions, ';');
   if (resRoles.found) {
@@ -73,6 +82,23 @@ async function executeRoleFunction(msg, args, fn, { ...args_fn } = {}) {
   }
 }
 
+async function executeRolesAdminAction(msg, args, fn) {
+  const argsArray = args.split(';');
+  const resUser = findMember(argsArray[0], msg.guild, msg.mentions.users);
+  if (resUser.found) {
+    await executeRoleFunction(msg, args.substr(argsArray[0].length + 1), fn, {
+      member: resUser.value,
+    });
+  } else {
+    await msg.channel.send(resUser.msg);
+    console.log(resUser.msg);
+  }
+  return true;
+}
+
+//////
+// add roles functions and wrapper
+//////
 async function addRoles(msg, roles, { member = null } = {}) {
   if (member === null) {
     member = msg.member;
@@ -91,22 +117,12 @@ async function addRolesAction(msg, args) {
 }
 
 async function addRolesAdminAction(msg, args) {
-  const argsArray = args.split(';');
-  const resUser = findMember(argsArray[0], msg.guild, msg.mentions.users);
-  if (resUser.found) {
-    await executeRoleFunction(
-      msg,
-      args.substr(argsArray[0].length + 1),
-      addRoles,
-      resUser.value
-    );
-  } else {
-    await msg.channel.send(resUser.msg);
-    console.log(resUser.msg);
-  }
-  return true;
+  return await executeRolesAdminAction(msg, args, addRoles);
 }
 
+//////
+// rm roles functions and wrapper
+//////
 async function rmRoles(msg, roles, { member = null } = {}) {
   if (member === null) {
     member = msg.member;
@@ -125,22 +141,12 @@ async function rmRolesAction(msg, args) {
 }
 
 async function rmRolesAdminAction(msg, args) {
-  const argsArray = args.split(';');
-  const resUser = findMember(argsArray[0], msg.guild, msg.mentions.users);
-  if (resUser.found) {
-    await executeRoleFunction(
-      msg,
-      args.substr(argsArray[0].length + 1),
-      rmRoles,
-      resUser.value
-    );
-  } else {
-    await msg.channel.send(resUser.msg);
-    console.log(resUser.msg);
-  }
-  return true;
+  return await executeRolesAdminAction(msg, args, rmRoles);
 }
 
+//////
+// toggle roles functions and wrapper
+//////
 async function toggleRoles(msg, roles, { member = null } = {}) {
   if (member === null) {
     member = msg.member;
@@ -164,22 +170,7 @@ async function toggleRolesAction(msg, args) {
 }
 
 async function toggleRolesAdminAction(msg, args) {
-  const argsArray = args.split(';');
-  const resUser = findMember(argsArray[0], msg.guild, msg.mentions.users);
-  if (resUser.found) {
-    await executeRoleFunction(
-      msg,
-      args.substr(argsArray[0].length + 1),
-      toggleRoles,
-      {
-        member: resUser.value,
-      }
-    );
-  } else {
-    await msg.channel.send(resUser.msg);
-    console.log(resUser.msg);
-  }
-  return true;
+  return await executeRolesAdminAction(msg, args, toggleRoles);
 }
 
 module.exports = {
