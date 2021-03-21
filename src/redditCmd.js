@@ -1,7 +1,7 @@
 'use strict';
 
 const Tumult = require('tumult');
-const redditUtils = require('./redditUtils');
+const redditUtils = require('./redditUtility');
 
 const emoji_extend = '➕';
 function filter_extend(reaction, user, author) {

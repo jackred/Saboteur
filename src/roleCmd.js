@@ -7,7 +7,7 @@ const {
   addRolesAdminAction,
   rmRolesAdminAction,
   toggleRolesAdminAction,
-} = require('./roleUtils');
+} = require('./roleUtility');
 
 //////
 // add command
