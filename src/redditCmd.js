@@ -2,6 +2,22 @@
 
 const Tumult = require('tumult');
 const redditUtils = require('./redditUtility');
+const { redditParser } = require('./parser');
+
+let subCmdList = new Tumult.Command(
+  'list',
+  async (msg, args) => {
+    console.log('list');
+    await msg.channel.send(
+      await redditUtils.requestListOfPostsAndBuildEmbed(args)
+    );
+    return true;
+  },
+  {
+    generalHelp: 'subreddit list function',
+    parser: redditParser,
+  }
+);
 
 const emoji_extend = '➕';
 function filter_extend(reaction, user, author) {
@@ -11,7 +27,7 @@ function filter_extend(reaction, user, author) {
 }
 
 let subCmdPost = new Tumult.Command(
-  '!',
+  'info',
   async (msg, args) => {
     let res = await redditUtils.requestPostAndBuildEmbed(args, msg.client);
     let new_msg = await msg.channel.send(res.embed);
@@ -37,7 +53,7 @@ let subCmdPost = new Tumult.Command(
   },
   {
     generalHelp: 'subreddit post function',
-    parser: Tumult.Parser.prefixParser,
+    parser: redditParser,
   }
 );
 
@@ -48,9 +64,10 @@ let subCmdPrefix = new Tumult.Command(
     return true;
   },
   {
+    subCommand: [subCmdList, subCmdPost],
     generalHelp: 'subreddit subfunction',
     parser: Tumult.Parser.prefixParser,
   }
 );
 
-module.exports = { subCmdPrefix, subCmdPost };
+module.exports = { subCmdPrefix };

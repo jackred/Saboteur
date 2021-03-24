@@ -93,6 +93,34 @@ Ratio: ${post.upvote_ratio}`;
   return { embed, extend };
 }
 
+function buildEmbedListPostReddit(posts, sub) {
+  let embed = buildEmbedReddit();
+  embed.setTitle(`Top post in ${sub.title}`);
+  embed.setAuthor(sub.url, sub.icon_img, rURL + '/' + sub.url);
+  embed.setDescription(`*${sub.public_description}*`);
+  for (let i = 0; i < Math.min(posts.length, 10); i++) {
+    let post = posts[i].data;
+    let field = `[link](${rURL + '/' + post.permalink})`;
+    if (post.link_flair_text !== null) {
+      field += ` | **[${post.link_flair_text}]**`;
+    }
+    field += '\n';
+    if (post.selftext !== '') {
+      let text = post.selftext;
+      if (post.selftext.length > 150) {
+        text = text.substr(0, 150) + '...';
+      }
+      field += text + '\n';
+    }
+    const infos = `Comment${post.num_comments > 1 ? 's' : ''}: ${
+      post.num_comments
+    } | Karma: ${post.score} | Ratio: ${post.upvote_ratio}`;
+    field += buildCode(infos, 'yaml');
+    embed.addField(post.title, field);
+  }
+  return embed;
+}
+
 async function requestSubAndBuildEmbed(subName) {
   const sub = await axios.get(`https://reddit.com/r/${subName}/about.json`);
   if (sub.data.data.over18) {
@@ -102,15 +130,30 @@ async function requestSubAndBuildEmbed(subName) {
   }
 }
 
+// todo: check nsfw before request post
 async function requestPostAndBuildEmbed(subName, client) {
   const posts = await axios.get(`https://reddit.com/r/${subName}/top.json`);
   let post = posts.data.data.children[0].data;
   const sub = await axios.get(`https://reddit.com/r/${subName}/about.json`);
   if (post.over_18) {
-    return 'sub is nsfw!';
+    return 'sub or post is nsfw!';
   } else {
     return buildEmbedPostReddit(post, sub.data.data, client);
   }
 }
 
-module.exports = { requestSubAndBuildEmbed, requestPostAndBuildEmbed };
+async function requestListOfPostsAndBuildEmbed(subName) {
+  const posts = await axios.get(`https://reddit.com/r/${subName}/top.json`);
+  const sub = await axios.get(`https://reddit.com/r/${subName}/about.json`);
+  if (sub.data.data.over_18) {
+    return 'sub is nsfw!';
+  } else {
+    return buildEmbedListPostReddit(posts.data.data.children, sub.data.data);
+  }
+}
+
+module.exports = {
+  requestSubAndBuildEmbed,
+  requestPostAndBuildEmbed,
+  requestListOfPostsAndBuildEmbed,
+};
