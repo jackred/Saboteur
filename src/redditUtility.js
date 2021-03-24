@@ -70,6 +70,9 @@ function buildEmbedPostReddit(post, sub, client) {
   if (post.link_flair_text !== null) {
     embed.setDescription(`**[${post.link_flair_text}]**`);
   }
+  if (post.stickied) {
+    embed.description += ' 📌';
+  }
   if (post.selftext !== '') {
     let text = post.selftext;
     if (post.selftext.length > 500) {
@@ -78,12 +81,15 @@ function buildEmbedPostReddit(post, sub, client) {
     }
     embed.addField('-', text);
   }
-  const infos = `Comment${post.num_comments > 1 ? 's' : ''}: ${
-    post.num_comments
-  }
-Karma: ${post.score}
-Ratio: ${post.upvote_ratio}`;
-  embed.addField('Infos', buildCode(infos, 'yaml'));
+  // const infos = `Comment${post.num_comments > 1 ? 's' : ''}: ${
+  //
+  //   }
+  // Karma: ${post.score}
+  // Ratio: ${post.upvote_ratio}`;
+  const infos = `🗨️ ${post.num_comments} 🔺${post.score} *(${
+    post.upvote_ratio * 100
+  }%)*`;
+  embed.addField('-----', infos);
   if (post.total_awards_received > 0) {
     embed.addFields(buildAwardPostReddit(post, client));
   }
@@ -104,6 +110,10 @@ function buildEmbedListPostReddit(posts, sub) {
     if (post.link_flair_text !== null) {
       field += ` | **[${post.link_flair_text}]**`;
     }
+    if (post.stickied) {
+      console.log('sticky?');
+      field += ' 📌';
+    }
     field += '\n';
     if (post.selftext !== '') {
       let text = post.selftext;
@@ -112,11 +122,11 @@ function buildEmbedListPostReddit(posts, sub) {
       }
       field += text + '\n';
     }
-    const infos = `Comment${post.num_comments > 1 ? 's' : ''}: ${
-      post.num_comments
-    } | Karma: ${post.score} | Ratio: ${post.upvote_ratio}`;
-    field += buildCode(infos, 'yaml');
-    embed.addField(post.title, field);
+    const infos = `\`🗨️ ${post.num_comments} 🔺${post.score} (${
+      post.upvote_ratio * 100
+    }%)\``;
+    field += infos;
+    embed.addField(i + '. ' + post.title, field);
   }
   return embed;
 }
