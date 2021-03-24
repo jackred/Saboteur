@@ -11,4 +11,8 @@ function cutAt(string, nbMax, limitChar = '') {
   return string;
 }
 
-module.exports = { cutAt };
+function randomBtwn2(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+module.exports = { cutAt, randomBtwn2 };
