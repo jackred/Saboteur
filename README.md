@@ -1,5 +1,11 @@
 # Saboteur
 
+
+## warning
+being rewritten
+master is the current (bad, sloppy x) ) version
+v2 is the next version (cleaner)
+
 Bot looking into a boardgames db to give you games matching a number of people / given time and other arguments
 
 ## Run the bot
